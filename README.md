@@ -9,9 +9,9 @@ Claude Code のサブエージェントで、note で売れる有料記事を「
 /note-paid AI 業務効率化     # ヒントを渡す
 ```
 
-途中で 2 回、ユーザーの確認が入ります（テーマ選び、企画の承認）。成果物は `articles/<日付>-<テーマ>/` に保存されます。
+途中で 2 回、ユーザーの確認が入ります（テーマ選び、企画の承認）。成果物は **`F:\WORK\CLAUDE-WORK\<日付>-<テーマ>\`** に保存されます。
 
-`articles/` は `.gitignore` に入れてあり、GitHub には上がりません（有料記事の中身を公開しないため）。手元の PC で Claude Code を動かせば、記事は PC の中だけに残ります。
+PC の Claude Code で動かすと、このフォルダに自動保存されます。F ドライブが無い環境（クラウドのセッション）では `articles/` に保存し、完成したファイルを送ります。記事は GitHub には上げません（`articles/` も `.gitignore` 済み）。
 
 | ファイル | 中身 |
 |---|---|
@@ -38,7 +38,7 @@ knowledge/
   winning-patterns.md      売れる有料記事の型（ジャンル、価格、タイトル、構成）
   quality-checklist.md     採点表
   note-rules.md            規約・法律・信頼のルール
-articles/                  生成した記事（GitHub には上げない）
+articles/                  F ドライブが無いときの予備の保存先（GitHub には上げない）
 ```
 
 ## 最初にやること
