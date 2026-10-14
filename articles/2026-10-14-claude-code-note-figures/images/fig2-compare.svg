@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" font-family="'Hiragino Sans','Yu Gothic','Noto Sans JP','Noto Sans CJK JP',sans-serif">
+  <rect width="100%" height="100%" fill="#ffffff"/>
+  <text x="600" y="80" text-anchor="middle" font-size="42" font-weight="bold" fill="#1f2937">画像生成AI と SVG方式の比較</text>
+  <rect x="80" y="120" width="1040" height="80" rx="16" fill="#1f2937"/>
+  <g font-size="30" font-weight="bold" fill="#ffffff" text-anchor="middle">
+    <text x="600" y="172">画像生成AI</text>
+    <text x="930" y="172">SVG方式</text>
+  </g>
+  <g font-size="28" fill="#1f2937">
+    <rect x="80" y="200" width="1040" height="105" fill="#f9fafb"/>
+    <text x="120" y="263" font-weight="bold">費用</text>
+    <text x="600" y="263" text-anchor="middle">APIは有料</text>
+    <text x="930" y="263" text-anchor="middle" fill="#2563eb" font-weight="bold">無料</text>
+
+    <text x="120" y="368" font-weight="bold">日本語の文字</text>
+    <text x="600" y="368" text-anchor="middle">崩れやすい</text>
+    <text x="930" y="368" text-anchor="middle" fill="#2563eb" font-weight="bold">崩れない</text>
+
+    <rect x="80" y="410" width="1040" height="105" fill="#f9fafb"/>
+    <text x="120" y="473" font-weight="bold">修正</text>
+    <text x="600" y="473" text-anchor="middle">作り直しになる</text>
+    <text x="930" y="473" text-anchor="middle" fill="#2563eb" font-weight="bold">文字だけ直せる</text>
+
+    <text x="120" y="578" font-weight="bold">得意な絵</text>
+    <text x="600" y="578" text-anchor="middle" fill="#b45309" font-weight="bold">写真・イラスト</text>
+    <text x="930" y="578" text-anchor="middle" fill="#2563eb" font-weight="bold">仕組み・手順の図</text>
+  </g>
+  <rect x="80" y="120" width="1040" height="500" rx="16" fill="none" stroke="#d1d5db" stroke-width="2"/>
+  <g stroke="#d1d5db" stroke-width="2">
+    <line x1="420" y1="200" x2="420" y2="620"/>
+    <line x1="780" y1="200" x2="780" y2="620"/>
+  </g>
+</svg>

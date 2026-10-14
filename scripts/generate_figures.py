@@ -1,20 +1,22 @@
 #!/usr/bin/env python3
-"""記事 Markdown 内の図の指示を OpenAI の画像生成 API で画像にする。
+"""記事 Markdown 内の図の指示から PNG 画像を作り、記事に埋め込む。
 
-記事中に次の形式のコメントを書いておくと、画像を生成して Markdown の画像リンクに置き換える:
+記事中に次の形式のコメントを書いておくと、画像を用意して直後に Markdown の画像リンクを入れる:
 
-    <!-- FIGURE: fig1-overview | 図の内容を説明するプロンプト -->
+    <!-- FIGURE: fig1-overview | 図の内容の説明 -->
+
+図の作り方は 2 通り:
+    --engine svg（既定・無料）
+        images/<name>.svg を Claude Code が手書きしておき、それを PNG に変換する。
+        変換には Node.js と Playwright が必要（npm install && npx playwright install chromium）。
+    --engine openai（有料）
+        コメントの説明をプロンプトとして OpenAI の画像生成 API で作る。
+        OPENAI_API_KEY（ChatGPT の有料プランとは別契約）が必要。
+        任意で OPENAI_IMAGE_MODEL（既定 gpt-image-1）、OPENAI_IMAGE_SIZE（既定 1536x1024）。
 
 使い方:
     python3 scripts/generate_figures.py articles/2026-10-14-example/article.md
-    python3 scripts/generate_figures.py article.md --dry-run   # API を呼ばずに確認
-
-必要な環境変数:
-    OPENAI_API_KEY      OpenAI の API キー（ChatGPT の有料プランとは別契約）
-    OPENAI_IMAGE_MODEL  省略時 gpt-image-1
-    OPENAI_IMAGE_SIZE   省略時 1536x1024（横長。note の見出し画像・図に向く）
-
-外部ライブラリは不要（標準ライブラリのみ）。
+    python3 scripts/generate_figures.py article.md --dry-run   # 何もせず一覧だけ表示
 """
 
 import argparse
@@ -22,6 +24,7 @@ import base64
 import json
 import os
 import re
+import subprocess
 import sys
 import time
 import urllib.error
@@ -79,7 +82,8 @@ def generate_image(prompt: str, api_key: str, model: str, size: str) -> bytes:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("article", type=Path, help="記事の Markdown ファイル")
-    parser.add_argument("--dry-run", action="store_true", help="API を呼ばず、生成予定の図を表示するだけ")
+    parser.add_argument("--engine", choices=["svg", "openai"], default="svg", help="図の作り方（既定: svg）")
+    parser.add_argument("--dry-run", action="store_true", help="何もせず、対象の図を表示するだけ")
     parser.add_argument("--force", action="store_true", help="既に画像があっても作り直す")
     args = parser.parse_args()
 
@@ -92,36 +96,63 @@ def main() -> None:
         return
 
     images_dir = args.article.parent / "images"
+    if args.engine == "svg":
+        convert_svgs(figures, images_dir, args.dry_run, args.force)
+    else:
+        generate_with_openai(figures, images_dir, args.dry_run, args.force)
+
+    if not args.dry_run:
+        embed_links(args.article, text)
+        print(f"{len(figures)} 枚の図を {args.article} に埋め込みました。")
+
+
+def convert_svgs(figures, images_dir: Path, dry_run: bool, force: bool) -> None:
+    missing, todo = [], []
+    for name, desc in figures:
+        svg, png = images_dir / f"{name}.svg", images_dir / f"{name}.png"
+        print(f"- {svg}: {' '.join(desc.split())[:80]}")
+        if not svg.exists():
+            missing.append(svg)
+        elif force or not png.exists() or png.stat().st_mtime < svg.stat().st_mtime:
+            todo += [str(svg), str(png)]
+    if missing:
+        sys.exit("SVG がまだありません:\n" + "\n".join(f"  {p}" for p in missing))
+    if dry_run or not todo:
+        return
+    script = Path(__file__).resolve().parent / "svg2png.mjs"
+    subprocess.run(["node", str(script), *todo], check=True, cwd=script.parent.parent)
+    print(f"  {len(todo) // 2} 枚を PNG に変換しました")
+
+
+def generate_with_openai(figures, images_dir: Path, dry_run: bool, force: bool) -> None:
     api_key = os.environ.get("OPENAI_API_KEY", "")
     model = os.environ.get("OPENAI_IMAGE_MODEL", "gpt-image-1")
     size = os.environ.get("OPENAI_IMAGE_SIZE", "1536x1024")
 
-    if not args.dry_run and not api_key:
+    if not dry_run and not api_key:
         sys.exit("OPENAI_API_KEY が設定されていません。.env に書くか環境変数で渡してください。")
 
     for name, prompt in figures:
         out = images_dir / f"{name}.png"
         print(f"- {out}: {' '.join(prompt.split())[:80]}")
-        if args.dry_run:
+        if dry_run:
             continue
-        if out.exists() and not args.force:
+        if out.exists() and not force:
             print("  既存の画像を使います（作り直すには --force）")
         else:
             images_dir.mkdir(parents=True, exist_ok=True)
             out.write_bytes(generate_image(prompt, api_key, model, size))
             print("  生成しました")
 
-    if args.dry_run:
-        return
 
-    # 図の指示コメントは残し（再生成用）、直後に画像リンクを入れる
+def embed_links(article: Path, text: str) -> None:
+    # 図の指示コメントは残し（作り直し用）、直後に画像リンクを入れる
     def embed(m: re.Match) -> str:
         name = m.group(1)
         link = f"![{name}](images/{name}.png)"
         return m.group(0) if link in text[m.end():m.end() + len(link) + 2] else f"{m.group(0)}\n{link}"
 
-    args.article.write_text(FIGURE_RE.sub(embed, text), encoding="utf-8")
-    print(f"{len(figures)} 枚の図を {args.article} に埋め込みました。")
+    article.write_text(FIGURE_RE.sub(embed, text), encoding="utf-8")
 
 
 if __name__ == "__main__":

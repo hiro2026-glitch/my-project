@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" font-family="'Hiragino Sans','Yu Gothic','Noto Sans JP','Noto Sans CJK JP',sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/>
+    </marker>
+  </defs>
+  <rect width="100%" height="100%" fill="#ffffff"/>
+  <text x="600" y="90" text-anchor="middle" font-size="42" font-weight="bold" fill="#1f2937">記事と図ができるまで</text>
+  <rect x="60" y="150" width="1080" height="70" rx="35" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text x="600" y="197" text-anchor="middle" font-size="30" fill="#1f2937">入力するのは <tspan font-weight="bold" fill="#2563eb">/note-article テーマ</tspan> だけ</text>
+  <g font-size="28" fill="#1f2937" text-anchor="middle">
+    <rect x="60" y="290" width="220" height="230" rx="16" fill="#ffffff" stroke="#2563eb" stroke-width="3"/>
+    <circle cx="170" cy="335" r="26" fill="#2563eb"/><text x="170" y="345" fill="#fff" font-weight="bold">1</text>
+    <text x="170" y="415" font-weight="bold">記事を書く</text>
+    <text x="170" y="465" font-size="22" fill="#4b5563">Claude Code</text>
+
+    <rect x="345" y="290" width="220" height="230" rx="16" fill="#ffffff" stroke="#2563eb" stroke-width="3"/>
+    <circle cx="455" cy="335" r="26" fill="#2563eb"/><text x="455" y="345" fill="#fff" font-weight="bold">2</text>
+    <text x="455" y="415" font-weight="bold" font-size="25">SVGで図を描く</text>
+    <text x="455" y="465" font-size="22" fill="#4b5563">Claude Code</text>
+
+    <rect x="630" y="290" width="220" height="230" rx="16" fill="#ffffff" stroke="#2563eb" stroke-width="3"/>
+    <circle cx="740" cy="335" r="26" fill="#2563eb"/><text x="740" y="345" fill="#fff" font-weight="bold">3</text>
+    <text x="740" y="415" font-weight="bold">PNGに変換</text>
+    <text x="740" y="465" font-size="22" fill="#4b5563">スクリプト</text>
+
+    <rect x="915" y="290" width="225" height="230" rx="16" fill="#fffbeb" stroke="#f59e0b" stroke-width="3"/>
+    <circle cx="1027" cy="335" r="26" fill="#f59e0b"/><text x="1027" y="345" fill="#fff" font-weight="bold">4</text>
+    <text x="1027" y="415" font-weight="bold">noteに投稿</text>
+    <text x="1027" y="465" font-size="22" fill="#b45309">ここだけ手作業</text>
+  </g>
+  <g stroke="#2563eb" stroke-width="4" marker-end="url(#arrow)">
+    <line x1="284" y1="405" x2="337" y2="405"/>
+    <line x1="569" y1="405" x2="622" y2="405"/>
+    <line x1="854" y1="405" x2="907" y2="405"/>
+  </g>
+  <rect x="60" y="560" width="790" height="56" rx="12" fill="#eff6ff"/>
+  <text x="455" y="597" text-anchor="middle" font-size="26" fill="#2563eb" font-weight="bold">ここまで自動・追加料金なし</text>
+</svg>
