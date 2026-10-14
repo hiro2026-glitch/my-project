@@ -11,6 +11,8 @@ Claude Code のサブエージェントで、note で売れる有料記事を「
 
 途中で 2 回、ユーザーの確認が入ります（テーマ選び、企画の承認）。成果物は `articles/<日付>-<テーマ>/` に保存されます。
 
+`articles/` は `.gitignore` に入れてあり、GitHub には上がりません（有料記事の中身を公開しないため）。手元の PC で Claude Code を動かせば、記事は PC の中だけに残ります。
+
 | ファイル | 中身 |
 |---|---|
 | `00_theme-scout.md` | テーマ候補の採点表と上位 3 案 |
@@ -36,7 +38,7 @@ knowledge/
   winning-patterns.md      売れる有料記事の型（ジャンル、価格、タイトル、構成）
   quality-checklist.md     採点表
   note-rules.md            規約・法律・信頼のルール
-articles/                  生成した記事
+articles/                  生成した記事（GitHub には上げない）
 ```
 
 ## 最初にやること
