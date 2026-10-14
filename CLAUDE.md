@@ -1,24 +1,24 @@
 # my-project
 
-note 記事を Claude Code で書き、記事内の解説図も Claude Code が SVG で描いて PNG にするためのリポジトリ。
+note 記事を Claude Code で書き、記事内の解説図は ChatGPT（無料版）で作るためのリポジトリ。
+ChatGPT 無料版はプログラムから呼べないので、プロンプトの貼り付けと画像の保存だけはユーザーが手作業で行う。
+
+## 流れ
+
+1. `/note-article <テーマ>` — 記事を書き、図ごとの ChatGPT 用プロンプトを `prompts.md` にまとめる
+2. ユーザーがプロンプトを ChatGPT に貼り付け、できた画像を記事フォルダの `images/` に保存する
+3. `/note-images`（または「画像を保存した」）— 画像の名前を合わせ、記事に埋め込み、内容を確認する
 
 ## 構成
 
 - `articles/<YYYY-MM-DD>-<slug>/article.md` — 記事本文
-- `articles/<YYYY-MM-DD>-<slug>/images/` — 図（`*.svg` が元データ、`*.png` が note にアップロードする画像）
-- `scripts/generate_figures.py` — 記事内の `<!-- FIGURE: name | 説明 -->` に対応する SVG を PNG にして埋め込む
-- `scripts/svg2png.mjs` — SVG → PNG 変換（Playwright の Chromium を使用）
-- `.claude/commands/note-article.md` — `/note-article <テーマ>` で記事作成〜図の作成まで行う
-
-## セットアップ
-
-```bash
-npm install
-npx playwright install chromium
-```
+- `articles/<YYYY-MM-DD>-<slug>/prompts.md` — ChatGPT に貼り付けるプロンプト一覧（自動生成）
+- `articles/<YYYY-MM-DD>-<slug>/images/` — ChatGPT で作った画像
+- `scripts/generate_figures.py` — `prompts.md` の作成と、画像の埋め込み
 
 ## ルール
 
-- 図の指示は `<!-- FIGURE: fig<番号>-<英字> | 説明 -->` の形式で書く。コメントは画像生成後も残す。
-- 図を直すときは SVG を編集してから `python3 scripts/generate_figures.py <article.md>` を再実行する（PNG は直接編集しない）。
-- 有料の OpenAI 画像生成（`--engine openai`）はユーザーに頼まれたときだけ使う。その場合 `OPENAI_API_KEY` を `.env` に書き、`.env` はコミットしない。
+- 図の指示は `<!-- FIGURE: fig<番号>-<英字> | ChatGPT への指示 -->` の形式で書く。コメントは画像を埋め込んだ後も残す。
+- 図に入れる文字は「」で囲んで明示し、少なく短くする（ChatGPT は文字が多いと崩しやすい）。
+- `prompts.md` は手で編集しない。指示を直すときは記事内のコメントを直してスクリプトを再実行する。
+- 有料の OpenAI 画像生成 API（`--engine openai`）はユーザーに頼まれたときだけ使う。その場合 `OPENAI_API_KEY` を `.env` に書き、`.env` はコミットしない。
