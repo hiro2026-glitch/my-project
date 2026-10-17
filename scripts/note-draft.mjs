@@ -6,14 +6,11 @@
 //       → プレースホルダーの位置に図を貼り付け → 「下書き保存」
 import fs from 'node:fs';
 import path from 'node:path';
-import { chromium } from 'playwright';
 import { loadArticle, mimeType } from './lib/article.mjs';
+import { launchNoteBrowser, openEditor, TITLE_SELECTOR } from './lib/browser.mjs';
 
-const STATE_PATH = path.resolve('.auth/note-state.json');
-// NOTE_EDITOR_URL はテスト用の差し替え先
-const EDITOR_NEW_URL = process.env.NOTE_EDITOR_URL ?? 'https://editor.note.com/new';
 const SEL = {
-  title: 'textarea[placeholder="記事タイトル"]',
+  title: TITLE_SELECTOR,
   body: '.ProseMirror[contenteditable="true"]',
   headerImageButton: 'button:has([aria-label="画像を追加"])',
   cropModal: '.CropModal__content',
@@ -52,23 +49,12 @@ if (flags.has('--dry-run')) {
   console.log('\n--dry-run のため、ブラウザは開きません。');
   process.exit(0);
 }
-if (!fs.existsSync(STATE_PATH)) {
-  console.error(`\nログイン状態がありません（${STATE_PATH}）。先に npm run note:login を実行してください。`);
-  process.exit(3);
-}
-
 const headless = flags.has('--headless');
-const browser = await chromium.launch({ headless });
-const context = await browser.newContext({ storageState: STATE_PATH, locale: 'ja-JP', viewport: { width: 1280, height: 900 } });
-const page = await context.newPage();
+const { context, page } = await launchNoteBrowser({ headless });
 const warnings = [];
 
 try {
-  await page.goto(EDITOR_NEW_URL);
-  if (/note\.com\/login/.test(page.url())) {
-    throw new Error('ログインが切れています。npm run note:login をやり直してください。');
-  }
-  await page.locator(SEL.title).waitFor({ timeout: 30_000 });
+  await openEditor(page, { headless });
   // 新規作成は /notes/<id>/edit へ移動する。移動前に入力すると消えることがあるので待つ。
   await page.waitForURL(/\/notes\/[^/]+\/edit/, { timeout: 15_000 }).catch(() => {});
 
@@ -136,7 +122,7 @@ try {
   console.error(`画面の状態：${shot}`);
   process.exitCode = 1;
 } finally {
-  await browser.close();
+  await context.close();
 }
 
 async function setHeaderImage(page, file) {

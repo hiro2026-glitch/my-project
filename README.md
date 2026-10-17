@@ -23,10 +23,12 @@ Claude Code で note 記事を作り、note の **下書き** まで保存する
 ```bash
 npm install
 npx playwright install chromium   # ブラウザ本体を入れる（初回のみ）
-npm run note:login                # 開いたブラウザで note にログイン → Enter
+npm run note:login                # 開いたブラウザで note にログイン（終わると自動で閉じます）
 ```
 
-ログイン状態は `.auth/note-state.json` に保存されます。パスワードと同じくらい大切なファイルなので、人に渡さないでください（Git には入らない設定にしてあります）。ログインが切れたら `npm run note:login` をやり直します。
+ログイン状態はブラウザのプロフィールごと `.auth/browser-profile` に保存されます。パスワードと同じくらい大切なフォルダなので、人に渡さないでください（Git には入らない設定にしてあります）。PCに Google Chrome が入っていれば、それを使います（Google ログインが通りやすいため）。
+
+ログインが切れていても、`npm run note:draft` が開いたブラウザでログインすれば、そのまま続きを実行します。
 
 ## 使い方
 
