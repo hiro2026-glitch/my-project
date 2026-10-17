@@ -1,0 +1,7 @@
+node_modules/
+# note のログイン状態（パスワード同等。絶対にコミットしない）
+.auth/
+# 生成物
+articles/*/preview.html
+articles/*/draft-screenshot.png
+articles/*/draft-error.png
