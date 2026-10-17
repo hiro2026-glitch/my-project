@@ -47,10 +47,23 @@ Claude Code で：
 
 作成済みのフォルダを保存し直すだけなら `/note-draft articles/<slug>` を使います。
 
+## PCでの作業をまとめて行う（おすすめ）
+
+エクスプローラーでリポジトリのフォルダを開き、`note-draft.cmd` をダブルクリックします（PowerShell なら `npm run note:go`）。
+
+1. 最新の記事を取り込む（git pull）
+2. 記事を選ぶ ← 確認
+3. 画像がそろっているか確認。足りなければ保存先フォルダを開いて待つ ← 確認
+4. タイトル・画像の一覧を表示し、「note に下書き保存しますか？」 ← 確認（y で実行）
+5. ブラウザで下書き保存（公開はしない）
+
+一度下書き保存した記事を選ぶと、下書きが2つできることを警告します。
+
 ## コマンド
 
 | コマンド | 内容 |
 |---|---|
+| `npm run note:go` | 取り込み→画像確認→確認のうえ下書き保存（上の手順） |
 | `npm run note:preview -- articles/<slug>` | 確認用の `preview.html` を作る |
 | `npm run note:draft -- articles/<slug> --dry-run` | 保存する内容と画像がそろっているかを確認するだけ |
 | `npm run note:draft -- articles/<slug>` | note の下書きに保存する |

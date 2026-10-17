@@ -5,7 +5,8 @@
   "scripts": {
     "note:login": "node scripts/note-login.mjs",
     "note:draft": "node scripts/note-draft.mjs",
-    "note:preview": "node scripts/preview.mjs"
+    "note:preview": "node scripts/preview.mjs",
+    "note:go": "node scripts/note-go.mjs"
   },
   "dependencies": {
     "marked": "^14.1.4",
