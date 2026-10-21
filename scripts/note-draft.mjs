@@ -6,6 +6,7 @@
 //       → プレースホルダーの位置に図を貼り付け → 「下書き保存」
 import fs from 'node:fs';
 import path from 'node:path';
+import { marked } from 'marked';
 import { loadArticle, mimeType } from './lib/article.mjs';
 import { launchNoteBrowser, openEditor, TITLE_SELECTOR } from './lib/browser.mjs';
 
@@ -138,16 +139,19 @@ async function setHeaderImage(page, file) {
 }
 
 // note のエディタは、HTML を含まないテキストの貼り付けを Markdown として解釈する。
+// ただし引用（> の行）は Markdown のままだと消えるため、引用がある記事は HTML も添えて貼る（改行は <br> で保つ）。
 async function pasteText(page, text) {
+  const html = /^>/m.test(text) ? marked.parse(text, { breaks: true }) : null;
   await page.evaluate(
-    ({ selector, text }) => {
+    ({ selector, text, html }) => {
       const dt = new DataTransfer();
       dt.setData('text/plain', text);
+      if (html) dt.setData('text/html', html);
       document.querySelector(selector).dispatchEvent(
         new ClipboardEvent('paste', { clipboardData: dt, bubbles: true, cancelable: true }),
       );
     },
-    { selector: SEL.body, text },
+    { selector: SEL.body, text, html },
   );
 }
 
